@@ -1,9 +1,12 @@
 package main;
+import java.util.HashMap;
+import java.util.Map;
 
 // 基本情報 H28 秋季 午後 Java
 
 // [プログラム 1]
 import java.util.Stack;
+
 /*public*/ interface Key {
     public void operateOn(Stack<Integer> stack);
 }
@@ -11,18 +14,18 @@ import java.util.Stack;
 
 // [プログラム 2]
 //import java.util.Stack;
-enum DigitKey Key { // enum DigitKey /* (a) */ key
+enum DigitKey implements Key { // enum DigitKey /* (a) */ key
     DIGIT0, DIGIT1, DIGIT2, DIGIT3, DIGIT4,
     DIGIT5, DIGIT6, DIGIT7, DIGIT8, DIGIT9;
     public void operateOn(Stack<Integer> stack) {
-        stack.push(); // stack.push( /* (b) */ * 10 + /* (c) */ );
+        stack.push(stack.pop() * 10 + ordinal()); // stack.push( /* (b) */ * 10 + /* (c) */ );
     }
 }
 
 
 // [プログラム 3]
 //import java.util.Stack;
-enum OperateionKey Key { // enum OperateionKey /* (a) */ Key
+enum OperateionKey implements Key { // enum OperateionKey /* (a) */ Key
     ADD, SUBTRACT, MULTIPLY, DIVIDE, EQUAL, CLEAR;
 
     public void operateOn(Stack<Integer> stack) {
@@ -35,7 +38,7 @@ enum OperateionKey Key { // enum OperateionKey /* (a) */ Key
     }
 
     private int calculate(int val1, int val2) {
-        switch() { // switch( /* (d) */ )
+        switch(this) { // switch( /* (d) */ )
             case ADD:
                 return val1 + val2;
             case SUBTRACT:
@@ -95,6 +98,29 @@ enum OperateionKey Key { // enum OperateionKey /* (a) */ Key
     }
 }
 
+
+// [プログラム 5]
+//import java.util.HashMap; // 先頭に記述
+//import java.util.Map; // 先頭に記述
+
+/* public */ class CalculatorTest {
+    public static void main(String args[]) {
+        Map<Character, Key> map = new HashMap<Character, Key>(); // Map<Character, /* (e) */> map = new HashMap<Character, /* (e) */>();
+        // 文字と列挙OperationKeyの定数の対応をmapに格納する
+        for (OperateionKey key : OperateionKey.values())
+            map.put("+-*/=C".charAt(key.ordinal()), key);
+        // 数字と列挙DigitKeyの定数の対応をmapに格納する
+        for (DigitKey key : DigitKey.values())
+            map.put("0123456789".charAt(key.ordinal()), key);
+
+        Calculator calc = new Calculator();
+        String chars = args[0];
+        // charsの各文字をキーの定数に変換し、メソッドonLeyPressedを呼び出す
+        for (int i = 0; i < chars.length(); i++) {
+            calc.onKeyPressed(map.get(chars.charAt(i)));
+        }
+    }
+}
 
 
 public class Main {
